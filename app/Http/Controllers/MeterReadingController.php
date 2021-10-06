@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MeterReadings;
 use App\Services\MeterReadingService;
 use Illuminate\Http\Request;
-use App\Models\ElectricityReading;
 
 class MeterReadingController extends Controller
 {
@@ -17,13 +15,14 @@ class MeterReadingController extends Controller
         $this->meterReadingService = $meterReadingService;
     }
 
-    public function getReading($smartMeterId) {
-        return response()->json( $this->meterReadingService->getReadings($smartMeterId), 200);
+    public function getReading($smartMeterId)
+    {
+        return response()->json($this->meterReadingService->getReadings($smartMeterId), 200);
     }
 
     public function storeReadings(Request $request)
     {
-	    $this->meterReadingService->storeReadings($request->all()["smartMeterId"], $request->all()["electricityReadings"]);
-            return response()->json("SUCCESS", 201);
+        $this->meterReadingService->storeReadings($request->all()["smartMeterId"], $request->all()["electricityReadings"]);
+        return response()->json("SUCCESS", 201);
     }
 }

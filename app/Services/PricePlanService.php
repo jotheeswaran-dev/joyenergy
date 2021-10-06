@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Services\MeterReadingService;
 use App\Models\MeterReadingsInitialize;
 use App\Models\PricePlan;
 
@@ -17,10 +16,11 @@ class PricePlanService
         $this->meterReadingInitializer = $meterReadingInitializer;
     }
 
-    public function getConsumptionCostOfElectricityReadingsForEachPricePlan($smartMeterId){
+    public function getConsumptionCostOfElectricityReadingsForEachPricePlan($smartMeterId)
+    {
         $electricityReadings = $this->meterReadingService->getReadings($smartMeterId);
 
-        if(is_null($electricityReadings)){
+        if (is_null($electricityReadings)) {
             return $electricityReadings;
         }
 
@@ -33,14 +33,15 @@ class PricePlanService
         return $getCostForAllPlans;
     }
 
-    public function getCostPlanForAllSuppliersWithCurrentSupplierDetails($smartMeterId){
+    public function getCostPlanForAllSuppliersWithCurrentSupplierDetails($smartMeterId)
+    {
         $costPricePerPlans = $this->getConsumptionCostOfElectricityReadingsForEachPricePlan($smartMeterId);
         $currentAvailableSupplierIds = $this->meterReadingInitializer->getSmartMeterToPricePlanAccounts();
 
         $currentSupplierIdForSmartMeterID = [];
         foreach ($currentAvailableSupplierIds as $currentAvailableSupplierId) {
-            if($currentAvailableSupplierId['id'] = $smartMeterId){
-                $currentSupplierIdForSmartMeterID = ['Current Supplier' => $currentAvailableSupplierId['value'] , "SmartmeterId" => $currentAvailableSupplierId['id']] ;
+            if ($currentAvailableSupplierId['id'] = $smartMeterId) {
+                $currentSupplierIdForSmartMeterID = ['Current Supplier' => $currentAvailableSupplierId['value'], "SmartmeterId" => $currentAvailableSupplierId['id']];
             }
         }
         array_push($costPricePerPlans, $currentSupplierIdForSmartMeterID);
@@ -48,18 +49,19 @@ class PricePlanService
         return $costPricePerPlans;
     }
 
-    private function calculateCost($electricityReadings, PricePlan $pricePlan){
+    private function calculateCost($electricityReadings, PricePlan $pricePlan)
+    {
         $average = $this->calculateAverageReading($electricityReadings);
         $timeElapsed = $this->calculateTimeElapsed($electricityReadings);
-        $averagedCost = $average/$timeElapsed;
+        $averagedCost = $average / $timeElapsed;
         return $averagedCost * $pricePlan->unitrate;
     }
 
     private function calculateAverageReading($electricityReadings)
     {
         $newSummedReadings = 0;
-        foreach (array($electricityReadings) as $electricityReading){
-            foreach($electricityReading as ["readings" => $reading]){
+        foreach (array($electricityReadings) as $electricityReading) {
+            foreach ($electricityReading as ["readings" => $reading]) {
                 $newSummedReadings += $reading;
             }
         }
@@ -77,7 +79,7 @@ class PricePlanService
         }
         $minimumElectricityReading = strtotime(min($readingHours));
         $maximumElectricityReading = strtotime(max($readingHours));
-        $timeElapsedInHours = abs($maximumElectricityReading - $minimumElectricityReading)/(60*60);
+        $timeElapsedInHours = abs($maximumElectricityReading - $minimumElectricityReading) / (60 * 60);
         return $timeElapsedInHours;
     }
 

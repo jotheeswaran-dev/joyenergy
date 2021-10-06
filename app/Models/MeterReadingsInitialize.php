@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class MeterReadingsInitialize extends Model
@@ -16,7 +15,8 @@ class MeterReadingsInitialize extends Model
         $this->electricityReadings = $this->generateMeterElectricityReadings();
     }
 
-    public function generateMeterElectricityReadings(){
+    public function generateMeterElectricityReadings()
+    {
         $readings = [];
         $smartMeterIds = $this->getSmartMeterToPricePlanAccounts();
 
@@ -27,7 +27,8 @@ class MeterReadingsInitialize extends Model
         return $readings;
     }
 
-    public function getSmartMeterToPricePlanAccounts(){
+    public function getSmartMeterToPricePlanAccounts()
+    {
         $this->smartMeterToPricePlanAccounts = [
             ['id' => 'smart-meter-0', 'value' => 'DrEvilsDarkEnergy'],
             ['id' => 'smart-meter-1', 'value' => 'TheGreenEcoSystem'],
@@ -37,18 +38,19 @@ class MeterReadingsInitialize extends Model
         return $this->smartMeterToPricePlanAccounts;
     }
 
-    public function generate($number){
+    public function generate($number)
+    {
         $electricityReadings = [];
-        for($i = 0; $i < $number; $i++)
-        {
-            $reading = mt_rand (10,100) / 550;
-            $electricity = new ElectricityReading(date("Y-m-d H:i:s", time() - $i*8000), $reading);
+        for ($i = 0; $i < $number; $i++) {
+            $reading = mt_rand(10, 100) / 550;
+            $electricity = new ElectricityReading(date("Y-m-d H:i:s", time() - $i * 8000), $reading);
             array_push($electricityReadings, array('readings' => $electricity->getReading(), 'time' => $electricity->getTime()));
         }
         return $electricityReadings;
     }
 
-    public  function getPricePlans(){
+    public function getPricePlans()
+    {
         $this->pricePlans = [
             new PricePlan('DrEvilsDarkEnergy', 50),
             new PricePlan('TheGreenEcoSystem', 40),

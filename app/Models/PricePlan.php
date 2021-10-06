@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PricePlan extends Model
@@ -17,12 +16,14 @@ class PricePlan extends Model
         $this->unitrate = $unitrate;
     }
 
-    public function GetPrice($datetime){
+    public function GetPrice($datetime)
+    {
 
     }
 }
 
-class PeakTimeMultiplier extends Model{
+class PeakTimeMultiplier extends Model
+{
     public $dayofweek;
     public $multiplier;
 }
