@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidMeterIdException;
 use App\Services\MeterReadingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,12 @@ class MeterReadingController extends Controller
 
     public function getReading($smartMeterId): JsonResponse
     {
-        return response()->json($this->meterReadingService->getReadings($smartMeterId));
+        try {
+            $electricityReadings = $this->meterReadingService->getReadings($smartMeterId);
+            return response()->json($electricityReadings);
+        } catch (InvalidMeterIdException $exception) {
+            return response()->json($exception->getMessage());
+        }
     }
 
     public function storeReadings(Request $request): JsonResponse

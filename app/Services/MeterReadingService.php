@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\InvalidMeterIdException;
 use App\Repository\ElectricityReadingRepository;
 use App\Repository\PricePlanRepository;
 use Illuminate\Support\Collection;
@@ -17,9 +18,16 @@ class MeterReadingService
         $this->pricePlanRepository = $pricePlanRepository;
     }
 
+    /**
+     * @throws InvalidMeterIdException
+     */
     public function getReadings($smartMeterId): Collection
     {
-        return $this->electricityReadingRepository->getElectricityReadings($smartMeterId);
+        $electricityReadings = $this->electricityReadingRepository->getElectricityReadings($smartMeterId);
+        if ($electricityReadings->isEmpty()) {
+            throw new InvalidMeterIdException("No electricity readings available for ".$smartMeterId);
+        }
+        return $electricityReadings;
     }
 
     public function storeReadings($smartMeterId, $readings): bool
