@@ -40,7 +40,7 @@ class MeterReadingServiceTest extends TestCase
      */
     public function should_Return_Empty_Array_For_Invalid_Meter_Id()
     {
-        $expectedReadings = collect([]);
+        $expectedReadings = collect("No electricity readings available for unknown-id");
         $this->electricityReadingRepositoryMock->method('getElectricityReadings')->willReturn($expectedReadings);
 
         $actualReadings = $this->meterReadingService->getReadings("unknown-id");

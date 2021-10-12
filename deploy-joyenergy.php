@@ -29,30 +29,36 @@ function isEnvValueSet($envKey, $fname): bool
     $line = substr($str, $keyPosition, $endOfLinePosition - $keyPosition);
     $value = substr($line, strpos($line, "=") + 1, strlen($line));
     if ($value === '') {
-        return False;
-    } else return True;
+        return false;
+    } else return true;
 }
 
-if (is_executable_available("composer")) {
-    echo "Installing Laravel, related packages and setting things up...\n";
-    exec("composer install", $output, $res);
-    if (!file_exists(".env")) {
-        exec("cp .env.example .env", $output, $res);
-        if ($res !== 0) {
-            echo "Error copying 'env' file...\n";
-            exit;
+$php_version = explode('.', phpversion());
+if (($php_version[0] == 7 && $php_version[1] >= 4 && $php_version[2] >= 24) || ($php_version[0] > 7)) {
+    if (is_executable_available("composer")) {
+        echo "Installing Laravel, related packages and setting things up...\n";
+        exec("composer install", $output, $res);
+        if (!file_exists(".env")) {
+            exec("cp .env.example .env", $output, $res);
+            if ($res !== 0) {
+                echo "Error copying 'env' file...\n";
+                exit;
+            }
         }
-    }
-    if (!isEnvValueSet("APP_KEY", ".env")) {
-        echo "Generating the APP KEY...\n";
-        exec("php artisan key:generate", $output1, $res1);
-        if ($res1 !== 0) {
-            echo "Error generating app key...\n";
-            exit;
+        if (!isEnvValueSet("APP_KEY", ".env")) {
+            echo "Generating the APP KEY...\n";
+            exec("php artisan key:generate", $output1, $res1);
+            if ($res1 !== 0) {
+                echo "Error generating app key...\n";
+                exit;
+            }
         }
+        system("php artisan serve");
+    } else {
+        echo "'PHP Composer' not found....\n";
+        echo " Please install 'Composer'. Ensure that the location of the installed 'composer' binary\n is in the 'PATH' environment variable and re-run this script...\n";
     }
-    system("php artisan serve");
 } else {
-    echo "'PHP Composer' not found....\n";
-    echo "Please install 'Composer' and re-run this script...\n";
+    echo "Need Php version 7.4.24 and above...\n";
+    exit;
 }
