@@ -29,9 +29,16 @@ class MeterReadingController extends Controller
 
     public function storeReadings(Request $request): JsonResponse
     {
-        $this->meterReadingService->storeReadings($request->all()["smartMeterId"], $request->all()["electricityReadings"]);
+        try {
+            $isReadingsStored = $this->meterReadingService->storeReadings($request->all()["smartMeterId"], $request->all()["electricityReadings"]);
 
-        return response()->json("Readings inserted sucessfully", 201);
+            if ($isReadingsStored) {
+                return response()->json("Readings inserted sucessfully", 201);
+            }
 
+            return response()->json("No readings available to insert");
+        } catch (InvalidMeterIdException $exception) {
+            return response()->json($exception->getMessage());
+        }
     }
 }
