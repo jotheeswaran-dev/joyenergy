@@ -30,9 +30,15 @@ class MeterReadingService
         return $electricityReadings;
     }
 
+
+    /**
+     * @throws InvalidMeterIdException
+     */
     public function storeReadings($smartMeterId, $readings): bool
     {
         $result = false;
+        $this->validateSmartMeterId($smartMeterId);
+
         foreach ($readings as $reading) {
             $smartIDFromDb = $this->electricityReadingRepository->getSmartMeterId($smartMeterId);
 
@@ -65,6 +71,18 @@ class MeterReadingService
         $electricityReadingArray = array('reading' => $reading['reading'], 'time' => $reading['time'], 'smart_meter_id' => $smartIDFromDb,
             'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s'));
         return $this->electricityReadingRepository->insertElectricityReadings($electricityReadingArray);
+    }
+
+
+    /**
+     * @throws InvalidMeterIdException
+     */
+    private function validateSmartMeterId($smartMeterId): void
+    {
+        $smartMeterIdPattern = "/^smart-meter-\d+$/";
+        if (preg_match($smartMeterIdPattern, $smartMeterId) == 0) {
+            throw new InvalidMeterIdException("Smart meter id should follow defined pattern (Ex: smart-meter-1)");
+        }
     }
 
 }
